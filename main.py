@@ -14,6 +14,39 @@ Unt = "Until"
 Until = re.compile(Unt)
 
 
+def check_statment(code_in):
+    code_in = code_in.split()
+
+    if code_in[0] == tokensLoop[0] and len(code_in) > 1:  # if it starts with repeat
+        i = 1
+
+        while code_in[i] != tokensLoop[1] and i < len(code_in):
+            if (re.fullmatch(ID, code_in[i])) and (re.fullmatch(assignment, code_in[i + 1])) and (
+                    re.fullmatch(ID, code_in[i + 2]) or re.fullmatch(NUM, code_in[i + 2])) and (
+                    code_in[i + 3] == tokensID[1]):
+                i += 4
+
+            else:
+                return 'Invalid statement'
+
+        if i > len(code_in):
+            return 'Invalid statement'
+        elif (i + 3 < len(code_in)):
+
+            return 'Invalid statement'
+        elif (code_in[i] == tokensLoop[1]) and (re.fullmatch(ID, code_in[i + 1])) and i + 2 == len(code_in):
+
+            return "valid"
+
+        else:
+
+            return "Invalid statement"
+
+
+    else:
+
+        return "Invalid statement"
+
 
 def statment_accept(code_in):
     code_in = code_in.split()
@@ -661,9 +694,14 @@ def printAllGOTO(diction):
 # example sample set 01
 
 
-print("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
-print(statment_accept("repeat x := 50 ; Until y"))
-my_tokens = statment_accept("repeat x := 50 ; Until y")
+
+user_input = input("enter tokens")
+if check_statment(user_input) == 'valid':
+    print(statment_accept(user_input))
+    my_tokens = statment_accept("repeat x := 50 ; y := 30 ; Until y")
+else:
+    print('invalid state')
+    exit()
 
 
 
