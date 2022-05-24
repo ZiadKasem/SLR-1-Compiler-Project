@@ -1,218 +1,6 @@
 # SLR(1)
+
 import copy
-import re
-
-ID = re.compile(r"[A-Za-z]+[0-9|A-Z|a-z]*")
-NUM = re.compile(r"[0-9]+")
-assignment = re.compile(":=")
-semi_col = re.compile(";")
-tokensID = (':=', ';')
-tokensLoop = ('repeat', 'Until')
-rep = "repeat"
-repeat = re.compile(rep)
-Unt = "Until"
-Until = re.compile(Unt)
-
-
-
-def statment_accept(code_in):
-    code_in = code_in.split()
-    tokens = []
-    for tok in code_in:
-        if code_in is None:
-           # l=tk.Label(root, text='inValid statement', bg='red').grid(row=4,column=1)
-            return None
-        else:
-            if re.fullmatch(Unt, tok):
-
-                tokens.append(tok)
-            elif re.fullmatch(rep, tok):
-
-                tokens.append(tok)
-            elif re.fullmatch(ID, tok):
-
-                tokens.append('Identifier')
-            elif re.fullmatch(NUM, tok):
-
-                tokens.append('Number')
-            elif re.fullmatch(assignment, tok):
-
-                tokens.append(tok)
-            elif re.fullmatch(semi_col, tok):
-
-                tokens.append(tok)
-
-    return tokens
-
-def stackimp(input_string):
-    global Table
-    i = 0
-
-
-    stack = ['0']
-    buffer = []
-    colomB = ['Identifier','Number',':=','repeat','Until' , ';' , '$' ,  'stmt-seq' ,'statement','repeat-stmt','assign-stmt', 'factor']
-    buffer =  input_string + ['$'] + ['%']
-    print("stack content")
-    # id* id+id $
-    # 1 2  34 5 6
-    # pointer ar first input element
-    counter =0
-
-    validFlag = True
-    # aabb
-    while validFlag:
-        nextInputchar = buffer[counter]
-        # end loop if all symbols matched
-        if nextInputchar == '%':
-            # hnzwd valid zyada
-            return "\ninValid String!"
-        elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'Accept':
-            return "\nValid String!"
-        elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'S1 ':
-            stack.append(nextInputchar)
-            stack.append('1')
-            counter=counter+1
-            print(stack)
-        elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'S2 ':
-            stack.append(nextInputchar)
-            stack.append('2')
-            counter = counter + 1
-            print(stack)
-        elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'S3 ':
-            stack.append(nextInputchar)
-            stack.append('3')
-            counter = counter + 1
-            print(stack)
-        elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'S4 ':
-            stack.append(nextInputchar)
-            stack.append('4')
-            counter = counter + 1
-            print(stack)
-        elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'S5 ':
-            stack.append(nextInputchar)
-            stack.append('5')
-            counter = counter + 1
-            print(stack)
-        elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'S6 ':
-            stack.append(nextInputchar)
-            stack.append('6')
-            counter = counter + 1
-            print(stack)
-        elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'S7 ':
-            stack.append(nextInputchar)
-            stack.append('7')
-            counter = counter + 1
-            print(stack)
-        elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'S8 ':
-            stack.append(nextInputchar)
-            stack.append('8')
-            counter = counter + 1
-            print(stack)
-        elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'S9 ':
-            stack.append(nextInputchar)
-            stack.append('9')
-            counter = counter + 1
-            print(stack)
-        elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'S10 ':
-            stack.append(nextInputchar)
-            stack.append('10')
-            counter = counter + 1
-            print(stack)
-        elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'S11 ':
-            stack.append(nextInputchar)
-            stack.append('11')
-            counter = counter + 1
-            print(stack)
-        elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'S12 ':
-            stack.append(nextInputchar)
-            stack.append('12')
-            counter = counter + 1
-            print(stack)
-        elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'S13 ':
-            stack.append(nextInputchar)
-            stack.append('13')
-            counter = counter + 1
-            print(stack)
-        elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'S14 ':
-            stack.append(nextInputchar)
-            stack.append('14')
-            counter = counter + 1
-            print(stack)
-        elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'S15 ':
-            stack.append(nextInputchar)
-            stack.append('15')
-            counter = counter + 1
-            print(stack)
-        elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'R1 ':
-            stack.pop(stack.__len__()-1)
-            stack.pop(stack.__len__() - 1)
-            stack.pop(stack.__len__() - 1)
-            stack.pop(stack.__len__() - 1)
-            stack.append('stmt-seq')
-            stack.append(Table[int(stack[stack.__len__()-2])][colomB.index('stmt-seq')])
-            print(stack)
-        elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'R2 ':
-            stack.pop(stack.__len__()-1)
-            stack.pop(stack.__len__() - 1)
-            stack.append('stmt-seq')
-            stack.append(Table[int(stack[stack.__len__()-2])][colomB.index('stmt-seq')])
-            print(stack)
-        elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'R3 ':
-            stack.pop(stack.__len__()-1)
-            stack.pop(stack.__len__() - 1)
-            stack.append('statement')
-            stack.append(Table[int(stack[stack.__len__()-2])][colomB.index('statement')])
-            print(stack)
-        elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'R4 ':
-            stack.pop(stack.__len__()-1)
-            stack.pop(stack.__len__() - 1)
-            stack.append('statement')
-            stack.append(Table[int(stack[stack.__len__()-2])][colomB.index('statement')])
-            print(stack)
-        elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'R5 ':
-            stack.pop(stack.__len__()-1)
-            stack.pop(stack.__len__() - 1)
-            stack.pop(stack.__len__() - 1)
-            stack.pop(stack.__len__() - 1)
-            stack.pop(stack.__len__() - 1)
-            stack.pop(stack.__len__() - 1)
-            stack.pop(stack.__len__() - 1)
-            stack.pop(stack.__len__() - 1)
-            stack.append('repeat-stmt')
-            stack.append(Table[int(stack[stack.__len__()-2])][colomB.index('repeat-stmt')])
-            print(stack)
-        elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'R6 ':
-            stack.pop(stack.__len__() - 1)
-            stack.pop(stack.__len__() - 1)
-            stack.pop(stack.__len__() - 1)
-
-            stack.pop(stack.__len__() - 1)
-
-            stack.pop(stack.__len__() - 1)
-
-            stack.pop(stack.__len__() - 1)
-
-            stack.pop(stack.__len__() - 1)
-
-            stack.pop(stack.__len__() - 1)
-
-            stack.append('assign-stmt')
-            stack.append(Table[int(stack[stack.__len__()-2])][colomB.index('assign-stmt')])
-            print(stack)
-        elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'R7 ':
-            stack.pop(stack.__len__() - 1)
-            stack.pop(stack.__len__() - 1)
-            stack.append('factor')
-            stack.append(Table[int(stack[stack.__len__()-2])][colomB.index('factor')])
-            print(stack)
-        elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'R8 ':
-            stack.pop(stack.__len__() - 1)
-            stack.pop(stack.__len__() - 1)
-            stack.append('factor')
-            stack.append(Table[int(stack[stack.__len__()-2])][colomB.index('factor')])
-            #stack.append('11')
-            print(stack)
 
 
 # perform grammar augmentation
@@ -542,7 +330,7 @@ def follow(nt):
 
 
 def createParseTable(statesDict, stateMap, T, NT):
-    global seperatedRulesList, diction,Table
+    global seperatedRulesList, diction
 
     # create rows and cols
     rows = list(statesDict.keys())
@@ -555,7 +343,6 @@ def createParseTable(statesDict, stateMap, T, NT):
         tempRow.append('')
     for x in range(len(rows)):
         Table.append(copy.deepcopy(tempRow))
-
 
     # make shift and GOTO entries in table
     for entry in stateMap:
@@ -638,7 +425,6 @@ def createParseTable(statesDict, stateMap, T, NT):
         j += 1
 
 
-
 def printResult(rules):
     for rule in rules:
         print(f"{rule[0]} ->"
@@ -659,26 +445,22 @@ def printAllGOTO(diction):
 # rules section - START
 
 # example sample set 01
-
-
-print("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
-print(statment_accept("repeat x := 50 ; Until y"))
-my_tokens = statment_accept("repeat x := 50 ; Until y")
-
-
-
-
-rules=["stmt-seq -> stmt-seq statement | statement",
-       "statement -> repeat-stmt | assign-stmt",
-       "repeat-stmt -> repeat stmt-seq until Identifier",
-       "assign-stmt -> Identifier := factor ;",
-       " factor -> Identifier | Number"
-    ]
-nonterm_userdef = ["stmt-seq", "statement", "repeat-stmt", "assign-stmt", "factor"]
-term_userdef = ['Identifier', 'Number', ':=', 'repeat', 'until', ';']
+rules = ["E -> E + T | T",
+         "T -> T * F | F",
+         "F -> ( E ) | id"
+         ]
+nonterm_userdef = ['E', 'T', 'F']
+term_userdef = ['id', '+', '*', '(', ')']
 start_symbol = nonterm_userdef[0]
 
-
+# example sample set 02
+# rules = ["S -> a X d | b Y d | a Y e | b X e",
+#		 "X -> c",
+#		 "Y -> c"
+#		 ]
+# nonterm_userdef = ['S','X','Y']
+# term_userdef = ['a','b','c','d','e']
+# start_symbol = nonterm_userdef[0]
 
 # rules section - END
 print("\nOriginal grammar input:\n")
@@ -703,7 +485,6 @@ printResult(I0)
 # use stateMap to store GOTOs
 statesDict = {}
 stateMap = {}
-Table = []
 
 # add first state to statesDict
 # and maintain stateCount
@@ -731,4 +512,3 @@ diction = {}
 createParseTable(statesDict, stateMap,
                  term_userdef,
                  nonterm_userdef)
-print(stackimp(my_tokens))
