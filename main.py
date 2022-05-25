@@ -1,6 +1,8 @@
 # SLR(1)
 import copy
 import re
+import graphviz
+import os
 
 ID = re.compile(r"[A-Za-z]+[0-9|A-Z|a-z]*")
 NUM = re.compile(r"[0-9]+")
@@ -20,7 +22,7 @@ def check_statment(code_in):
     if code_in[0] == tokensLoop[0] and len(code_in) > 1:  # if it starts with repeat
         i = 1
 
-        while code_in[i] != tokensLoop[1] and i < len(code_in):
+        while code_in[i] != tokensLoop[1] and i < len(code_in) and len(code_in) >3:
             if (re.fullmatch(ID, code_in[i])) and (re.fullmatch(assignment, code_in[i + 1])) and (
                     re.fullmatch(ID, code_in[i + 2]) or re.fullmatch(NUM, code_in[i + 2])) and (
                     code_in[i + 3] == tokensID[1]):
@@ -79,23 +81,22 @@ def statment_accept(code_in):
 
 def stackimp(input_string):
     global Table
+
     i = 0
-
-
     stack = ['0']
     buffer = []
     colomB = ['Identifier','Number',':=','repeat','Until' , ';' , '$' ,  'stmt-seq' ,'statement','repeat-stmt','assign-stmt', 'factor']
-    buffer =  input_string + ['$'] + ['%']
+    buffer =  input_string + ['$']
+    print(buffer)
     print("stack content")
-    # id* id+id $
-    # 1 2  34 5 6
     # pointer ar first input element
     counter =0
-
     validFlag = True
     # aabb
     while validFlag:
+
         nextInputchar = buffer[counter]
+
         # end loop if all symbols matched
         if nextInputchar == '%':
             # hnzwd valid zyada
@@ -103,149 +104,211 @@ def stackimp(input_string):
         elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'Accept':
             return "\nValid String!"
         elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'S1 ':
+
             stack.append(nextInputchar)
             stack.append('1')
             counter=counter+1
             print(stack)
         elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'S2 ':
+
             stack.append(nextInputchar)
             stack.append('2')
             counter = counter + 1
             print(stack)
         elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'S3 ':
+
             stack.append(nextInputchar)
             stack.append('3')
             counter = counter + 1
             print(stack)
         elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'S4 ':
+
             stack.append(nextInputchar)
             stack.append('4')
             counter = counter + 1
             print(stack)
         elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'S5 ':
+
             stack.append(nextInputchar)
             stack.append('5')
             counter = counter + 1
             print(stack)
         elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'S6 ':
+
             stack.append(nextInputchar)
             stack.append('6')
             counter = counter + 1
             print(stack)
         elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'S7 ':
+
             stack.append(nextInputchar)
             stack.append('7')
             counter = counter + 1
             print(stack)
         elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'S8 ':
+
             stack.append(nextInputchar)
             stack.append('8')
             counter = counter + 1
             print(stack)
         elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'S9 ':
+
             stack.append(nextInputchar)
             stack.append('9')
             counter = counter + 1
             print(stack)
         elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'S10 ':
+
+
             stack.append(nextInputchar)
             stack.append('10')
             counter = counter + 1
             print(stack)
         elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'S11 ':
+
             stack.append(nextInputchar)
             stack.append('11')
             counter = counter + 1
             print(stack)
         elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'S12 ':
+            print(nextInputchar)
             stack.append(nextInputchar)
             stack.append('12')
             counter = counter + 1
             print(stack)
         elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'S13 ':
+
             stack.append(nextInputchar)
             stack.append('13')
             counter = counter + 1
             print(stack)
         elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'S14 ':
+
             stack.append(nextInputchar)
             stack.append('14')
             counter = counter + 1
             print(stack)
         elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'S15 ':
+
             stack.append(nextInputchar)
             stack.append('15')
             counter = counter + 1
+
             print(stack)
         elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'R1 ':
-            stack.pop(stack.__len__()-1)
+            popList=[]
             stack.pop(stack.__len__() - 1)
+            popList.append(addNode(stack.pop(stack.__len__() - 1)))
             stack.pop(stack.__len__() - 1)
-            stack.pop(stack.__len__() - 1)
+            popList.append(addNode(stack.pop(stack.__len__()-1)))
+
+            parent = addNode('stmt-seq')
             stack.append('stmt-seq')
             stack.append(Table[int(stack[stack.__len__()-2])][colomB.index('stmt-seq')])
+            for child in popList:
+                addEgde(parent, child)
+
             print(stack)
         elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'R2 ':
+            popList = []
             stack.pop(stack.__len__()-1)
-            stack.pop(stack.__len__() - 1)
+            popList.append(stack.pop(stack.__len__() - 1))
             stack.append('stmt-seq')
             stack.append(Table[int(stack[stack.__len__()-2])][colomB.index('stmt-seq')])
+            parent = addNode('stmt-seq')
+            for child in popList:
+                addEgde(child,parent)
+
+
             print(stack)
         elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'R3 ':
+            popList = []
             stack.pop(stack.__len__()-1)
-            stack.pop(stack.__len__() - 1)
+            popList.append(stack.pop(stack.__len__() - 1))
             stack.append('statement')
+            parent = addNode('statement')
             stack.append(Table[int(stack[stack.__len__()-2])][colomB.index('statement')])
+            for child in popList:
+                addEgde(parent, child)
             print(stack)
         elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'R4 ':
+            popList = []
             stack.pop(stack.__len__()-1)
-            stack.pop(stack.__len__() - 1)
+            popList.append(stack.pop(stack.__len__() - 1))
             stack.append('statement')
+            parent = addNode('statement')
             stack.append(Table[int(stack[stack.__len__()-2])][colomB.index('statement')])
+            for child in popList:
+                addEgde(parent, child)
             print(stack)
         elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'R5 ':
+            popList = []
             stack.pop(stack.__len__()-1)
+            popList.append(stack.pop(stack.__len__() - 1))
             stack.pop(stack.__len__() - 1)
+            popList.append(stack.pop(stack.__len__() - 1))
             stack.pop(stack.__len__() - 1)
+            popList.append(stack.pop(stack.__len__() - 1))
             stack.pop(stack.__len__() - 1)
-            stack.pop(stack.__len__() - 1)
-            stack.pop(stack.__len__() - 1)
-            stack.pop(stack.__len__() - 1)
-            stack.pop(stack.__len__() - 1)
+            popList.append(stack.pop(stack.__len__() - 1))
             stack.append('repeat-stmt')
+            parent = addNode('repeat-stmt')
             stack.append(Table[int(stack[stack.__len__()-2])][colomB.index('repeat-stmt')])
+            for child in popList:
+                addEgde(parent, child)
             print(stack)
         elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'R6 ':
+            popList = []
             stack.pop(stack.__len__() - 1)
+            popList.append(stack.pop(stack.__len__() - 1))
             stack.pop(stack.__len__() - 1)
+            popList.append(stack.pop(stack.__len__() - 1))
             stack.pop(stack.__len__() - 1)
-
+            popList.append(stack.pop(stack.__len__() - 1))
             stack.pop(stack.__len__() - 1)
-
-            stack.pop(stack.__len__() - 1)
-
-            stack.pop(stack.__len__() - 1)
-
-            stack.pop(stack.__len__() - 1)
-
-            stack.pop(stack.__len__() - 1)
-
+            popList.append(stack.pop(stack.__len__() - 1))
+            print(popList)
+            parent = addNode('assign-stmt')
             stack.append('assign-stmt')
             stack.append(Table[int(stack[stack.__len__()-2])][colomB.index('assign-stmt')])
+            for child in popList:
+                addEgde(parent, child)
             print(stack)
         elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'R7 ':
+            popList = []
             stack.pop(stack.__len__() - 1)
-            stack.pop(stack.__len__() - 1)
+            popList.append(stack.pop(stack.__len__() - 1))
             stack.append('factor')
+            parent = addNode('factor')
             stack.append(Table[int(stack[stack.__len__()-2])][colomB.index('factor')])
+            for child in popList:
+                addEgde(parent, child)
             print(stack)
         elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'R8 ':
+            popList = []
             stack.pop(stack.__len__() - 1)
-            stack.pop(stack.__len__() - 1)
+            popList.append(stack.pop(stack.__len__() - 1))
             stack.append('factor')
+            parent = addNode('factor')
             stack.append(Table[int(stack[stack.__len__()-2])][colomB.index('factor')])
-            #stack.append('11')
+            for child in popList:
+                addEgde(parent,child)
             print(stack)
+
+def addNode(state):
+    global NodeUniqueName , name_list
+    name = str(NodeUniqueName)
+    dot.node(name,state)
+
+    name_list.append(state)
+
+    name_list = [name for name in name_list if not name.isnumeric()]
+    NodeUniqueName +=1
+    return name
+
+def addEgde(preState,currentState):
+    dot.edge(preState,currentState)
+
 
 
 # perform grammar augmentation
@@ -684,7 +747,7 @@ def printAllGOTO(diction):
               f" {itr[1]} ) = I{stateMap[itr]}")
 
 
-# * MAIN * - Driver Code
+# * MAIN * - Driver Code ================================================================================================
 
 # uncomment any rules set to test code
 # follow given format to add -
@@ -696,9 +759,14 @@ def printAllGOTO(diction):
 
 
 user_input = input("enter tokens")
+# for parse tree
+NodeUniqueName = 0
+dot = graphviz.Digraph('The Round Table', filename='parseTree.gv')
+name_list =[]
 if check_statment(user_input) == 'valid':
     print(statment_accept(user_input))
-    my_tokens = statment_accept("repeat x := 50 ; y := 30 ; Until y")
+    my_tokens = statment_accept(user_input)
+
 else:
     print('invalid state')
     exit()
@@ -770,3 +838,4 @@ createParseTable(statesDict, stateMap,
                  term_userdef,
                  nonterm_userdef)
 print(stackimp(my_tokens))
+dot.view()
