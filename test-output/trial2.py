@@ -3,7 +3,6 @@ import copy
 import re
 import graphviz
 import os
-
 ID = re.compile(r"[A-Za-z]+[0-9|A-Z|a-z]*")
 NUM = re.compile(r"[0-9]+")
 assignment = re.compile(":=")
@@ -14,40 +13,74 @@ rep = "repeat"
 repeat = re.compile(rep)
 Unt = "Until"
 Until = re.compile(Unt)
-
+until_num=0
 
 def check_statment(code_in):
+    global until_num
     code_in = code_in.split()
 
     if code_in[0] == tokensLoop[0] and len(code_in) > 1:  # if it starts with repeat
         i = 1
 
-        while code_in[i] != tokensLoop[1] and i < len(code_in) and len(code_in) >6:
-            if (re.fullmatch(ID, code_in[i])) and (re.fullmatch(assignment, code_in[i + 1])) and (
-                    re.fullmatch(ID, code_in[i + 2]) or re.fullmatch(NUM, code_in[i + 2])) and (
-                    code_in[i + 3] == tokensID[1]):
-                i += 4
+        while code_in[i] != tokensLoop[1] and i < len(code_in):
+            while(code_in[i]==tokensLoop[0]):                                 #repeat repeat repeat  x := 5 ;
+                i+=1
+                until_num+=1
+
+            if (re.fullmatch(ID, code_in[i])) and i < len(code_in):
+                 i+=1
+                 if(re.fullmatch(assignment, code_in[i ])) and i < len(code_in):
+                      i+=1
+                      if(re.fullmatch(ID, code_in[i ]) or re.fullmatch(NUM, code_in[i ]))and i < len(code_in):
+                          i+=1
+                          if(code_in[i ] == tokensID[1]) and i < len(code_in):
+                                     i+=1
+                          else:
+                              return 'Invalid statement1'
+                      else:
+                          return 'Invalid statement2'
+                 else:
+                     return 'Invalid statement3'
+            else:
+                return 'Invalid statement4'
+        while(until_num>-1):
+            if i > len(code_in):
+                return 'Invalid statement5'
+            elif (i + 3 < len(code_in)) and until_num==0:
+
+                return 'Invalid statement6'
+            elif (code_in[i] == tokensLoop[1]) and (re.fullmatch(ID, code_in[i + 1])):
+                until_num = until_num - 1
+                i+=2
 
             else:
-                return 'Invalid statement'
 
-        if i > len(code_in):
-            return 'Invalid statement'
-        elif (i + 3 < len(code_in)):
-
-            return 'Invalid statement'
-        elif (code_in[i] == tokensLoop[1]) and (re.fullmatch(ID, code_in[i + 1])) and i + 2 == len(code_in):
-
-            return "valid"
-
-        else:
-
-            return "Invalid statement"
-
-
+                return "Invalid statement7"
+        return "valid"
+    elif re.fullmatch(ID, code_in[0]):
+        i=0
+        while re.fullmatch(ID, code_in[i]):
+            i+=1
+            if i+2>len(code_in):
+                return 'Invalid statement11'
+            if (re.fullmatch(assignment, code_in[i])) and i < len(code_in):
+                i += 1
+                if (re.fullmatch(ID, code_in[i]) or re.fullmatch(NUM, code_in[i])) and i < len(code_in):
+                    i += 1
+                    if (code_in[i] == tokensID[1]) and i < len(code_in):
+                        i += 1
+                    else:
+                        return 'Invalid statement1'
+                else:
+                    return 'Invalid statement2'
+            else:
+                return 'Invalid statement3'
+            if(i==len(code_in)):
+                break
+        return 'valid'
     else:
 
-        return "Invalid statement"
+        return "Invalid statement8"
 
 
 def statment_accept(code_in):
@@ -81,7 +114,7 @@ def statment_accept(code_in):
 
 def stackimp(input_string):
     global Table
-    prevparent = ''
+
     i = 0
     stack = ['0']
     buffer = []
@@ -93,6 +126,8 @@ def stackimp(input_string):
     counter =0
     validFlag = True
     # aabb
+
+    prevparent = '-1'
     while validFlag:
 
         nextInputchar = buffer[counter]
@@ -195,213 +230,185 @@ def stackimp(input_string):
             counter = counter + 1
 
             print(stack)
+
         elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'R1 ':
             popList=[]
             stack.pop(stack.__len__() - 1)
-            a = stack.pop(stack.__len__() - 1)
-            if a in name_list:
-                popList.append(prevparent)
-            else:
-                popList.append(addNode(a,''))
+            popList.append(addNode(stack.pop(stack.__len__() - 1)))
             stack.pop(stack.__len__() - 1)
-            a = stack.pop(stack.__len__() - 1)
-            if b in name_list:
-                popList.append(prevparent)
-            else:
-                popList.append(addNode(b,''))
-
-            parent = addNode('stmt-seq','')
+            popList.append(addNode(stack.pop(stack.__len__()-1)))
+            parent = addNode('stmt-seq')
             stack.append('stmt-seq')
             stack.append(Table[int(stack[stack.__len__()-2])][colomB.index('stmt-seq')])
             for child in popList:
-                addEgde(parent, child, child)
-            name_list.pop(name_list.index(a))
-            name_list.pop(name_list.index(b))
-            prevparent=parent
+                print(child)
+                print(prevparent)
+                print("ana hns")
+
+                if name_list[int(child)] == name_list[int(prevparent)]:
+                    print("im in 1")
+                    addEgde(prevparent, parent)
+
+                else:
+                    addEgde(parent, child)
+            prevparent = parent
+
             print(stack)
         elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'R2 ':
             popList = []
             stack.pop(stack.__len__()-1)
-            a = stack.pop(stack.__len__() - 1)
-            if not (a in name_list):
-                popList.append(addNode(a,''))
-            else:
-                popList.append(prevparent)
+            popList.append(addNode(stack.pop(stack.__len__() - 1)))
             stack.append('stmt-seq')
-            stack.append(Table[int(stack[stack.__len__() - 2])][colomB.index('stmt-seq')])
-            parent = addNode('stmt-seq','')
+            stack.append(Table[int(stack[stack.__len__()-2])][colomB.index('stmt-seq')])
+            parent = addNode('stmt-seq')
             for child in popList:
-                addEgde(parent, child,child)
-            name_list.pop(name_list.index(a))
-            prevparent=parent
+                print(child)
+                print(prevparent)
+                if name_list[int(child)] == name_list[int(prevparent)]:
+                    print("im in 2")
+                    addEgde(parent, prevparent)
+
+                    del dot.body[int(child)]
+                else:
+                    addEgde(parent, child)
+            prevparent = parent
+
+
             print(stack)
         elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'R3 ':
             popList = []
             stack.pop(stack.__len__()-1)
-            a = stack.pop(stack.__len__() - 1)
-            if not (a in name_list):
-                popList.append(addNode(a,''))
-            else:
-                popList.append(prevparent)
+            popList.append(addNode(stack.pop(stack.__len__() - 1)))
             stack.append('statement')
-            parent = addNode('statement','')
+            parent = addNode('statement')
             stack.append(Table[int(stack[stack.__len__()-2])][colomB.index('statement')])
             for child in popList:
-                addEgde(parent, child,child)
-            name_list.pop(name_list.index(a))
+                print(child)
+                print(prevparent)
+                print("ana hns")
+                print(name_list[int(child)])
+                if name_list[int(child)] == name_list[int(prevparent)]:
+                    print("im in 3")
+                    addEgde(parent, prevparent)
+
+                    del dot.body[int(child)]
+                else:
+                    addEgde(parent, child)
             prevparent = parent
             print(stack)
         elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'R4 ':
             popList = []
-            stack.pop(stack.__len__() - 1)
-            a = stack.pop(stack.__len__() - 1)
-            if not (a in name_list):
-                popList.append(addNode(a,''))
-            else:
-                popList.append(prevparent)
+            stack.pop(stack.__len__()-1)
+            popList.append(addNode(stack.pop(stack.__len__() - 1)))
             stack.append('statement')
-            parent = addNode('statement','')
+            parent = addNode('statement')
             stack.append(Table[int(stack[stack.__len__()-2])][colomB.index('statement')])
             for child in popList:
-                addEgde(parent, child,child)
-                name_list.pop(name_list.index(a))
-            prevparent = parent
+                print(child)
+                print(prevparent)
+                if name_list[int(child)] == name_list[int(prevparent)]:
+                    print("im in 4")
+                    addEgde(parent, prevparent)
+
+                    del dot.body[int(child)]
+                else:
+                    addEgde(parent, child)
+            prevparent =parent
             print(stack)
         elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'R5 ':
             popList = []
             stack.pop(stack.__len__()-1)
-            a = stack.pop(stack.__len__() - 1)
+            popList.append(addNode(stack.pop(stack.__len__() - 1)))
             stack.pop(stack.__len__() - 1)
-            b = stack.pop(stack.__len__() - 1)
+            popList.append(addNode(stack.pop(stack.__len__() - 1)))
             stack.pop(stack.__len__() - 1)
-            c = stack.pop(stack.__len__() - 1)
+            popList.append(addNode(stack.pop(stack.__len__() - 1)))
             stack.pop(stack.__len__() - 1)
-            d = stack.pop(stack.__len__() - 1)
-
-
-            if not (a in name_list):
-                popList.append(addNode(a,''))
-            else:
-                popList.append(prevparent)
-            if not (d in name_list):
-                popList.append(addNode(d, ''))
-            else:
-                popList.append(prevparent)
-            if not (c in name_list):
-                popList.append(addNode(c, ''))
-            else:
-                popList.append(prevparent) # the stmt-seq one
-            if not (b in name_list):
-                popList.append(addNode(b,''))
-            else:
-                popList.append(prevparent)
-
-
+            popList.append(addNode(stack.pop(stack.__len__() - 1)))
             stack.append('repeat-stmt')
-            parent = addNode('repeat-stmt','')
+            parent = addNode('repeat-stmt')
             stack.append(Table[int(stack[stack.__len__()-2])][colomB.index('repeat-stmt')])
-            print("///////////////////////")
-            print (popList)
-            for child in reversed(popList):
+            for child in popList:
                 print(child)
-                addEgde(parent, child,child)
+                print(prevparent)
+                if name_list[int(child)] == name_list[int(prevparent)]:
+                    print("im in 5")
+                    addEgde(parent, prevparent)
 
+                    del dot.body[int(child)]
+                else:
+                    addEgde(parent, child)
             prevparent = parent
-            name_list.pop(name_list.index(a))
-            name_list.pop(name_list.index(d))
-            name_list.pop(name_list.index(c))
-
-            name_list.pop(name_list.index(b))
             print(stack)
         elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'R6 ':
             popList = []
             stack.pop(stack.__len__() - 1)
-            a = stack.pop(stack.__len__() - 1)
+            popList.append(addNode(stack.pop(stack.__len__() - 1)))
             stack.pop(stack.__len__() - 1)
-            b = stack.pop(stack.__len__() - 1)
+            popList.append(addNode(stack.pop(stack.__len__() - 1)))
             stack.pop(stack.__len__() - 1)
-            c = stack.pop(stack.__len__() - 1)
+            popList.append(addNode(stack.pop(stack.__len__() - 1)))
             stack.pop(stack.__len__() - 1)
-            d = stack.pop(stack.__len__() - 1)
+            popList.append(addNode(stack.pop(stack.__len__() - 1)))
 
-
-            if not (d in name_list):
-                popList.append(addNode(d,"x"))
-            else:
-                popList.append(prevparent)
-            if not (c in name_list):
-                popList.append(addNode(c,'a'))
-            else:
-                popList.append(prevparent)
-
-            if not (b in name_list):
-                popList.append(addNode(b,'b'))
-            else:
-                popList.append(prevparent)
-            if not (a in name_list):
-                popList.append(addNode(a,'c'))
-            else:
-                popList.append(prevparent)
-
-
-
-
-
-            print(popList)
-            parent = addNode('assign-stmt','')
+            parent = addNode('assign-stmt')
             stack.append('assign-stmt')
             stack.append(Table[int(stack[stack.__len__()-2])][colomB.index('assign-stmt')])
             for child in popList:
-                addEgde(parent, child,child)
-            name_list.pop(name_list.index(a))
-            name_list.pop(name_list.index(b))
-            name_list.pop(name_list.index(c))
-            name_list.pop(name_list.index(d))
+                print(child)
+                print(prevparent)
+                if name_list[int(child)] == name_list[int(prevparent)]:
+                    print("im in 6")
+                    addEgde(parent, prevparent)
+
+                    del dot.body[int(child)]
+                else:
+                    addEgde(parent, child)
             prevparent = parent
             print(stack)
         elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'R7 ':
             popList = []
             stack.pop(stack.__len__() - 1)
-            a = stack.pop(stack.__len__() - 1)
-            if not (a in name_list):
-                popList.append(addNode(a,''))
-            else:
-                popList.append(prevparent)
+            popList.append(addNode(stack.pop(stack.__len__() - 1)))
             stack.append('factor')
-            parent = addNode('factor','')
+            parent = addNode('factor')
             stack.append(Table[int(stack[stack.__len__()-2])][colomB.index('factor')])
             for child in popList:
-                addEgde(parent, child,child)
-            name_list.pop(name_list.index(a))
-            prevparent = parent
+                print(child)
+                print(prevparent)
+                if name_list[int(child)] == name_list[int(prevparent)]:
+                    print("im in 7")
+                    addEgde(parent, prevparent)
+                else:
+                    del dot.body[int(child)]
+                    addEgde(parent, child)
+            prevparent =parent
             print(stack)
         elif Table[ int(stack[stack.__len__()-1]) ][colomB.index(nextInputchar)] == 'R8 ':
             popList = []
             stack.pop(stack.__len__() - 1)
-            a = stack.pop(stack.__len__() - 1)
-            if not (a in name_list):
-                popList.append(addNode(a,''))
-            else:
-                popList.append(prevparent)
+            popList.append(addNode(stack.pop(stack.__len__() - 1)))
             stack.append('factor')
-            parent = addNode('factor','f')
+            parent = addNode('factor')
             stack.append(Table[int(stack[stack.__len__()-2])][colomB.index('factor')])
             for child in popList:
-                addEgde(parent, child,child)
-            name_list.pop(name_list.index(a))
+                print(child)
+                print(prevparent)
+                if name_list[int(child)] == name_list[int(prevparent)]:
+                    print("im in 8")
+                    addEgde(parent, prevparent)
+
+                    del dot.body[int(child)]
+                else:
+                    addEgde(parent, child)
+
             prevparent = parent
             print(stack)
 
-def addNode(state,extra):
-    global NodeUniqueName , name_list,user_input_splited,idrep
+def addNode(state):
+    global NodeUniqueName , name_list
     name = str(NodeUniqueName)
-    if state == "Identifier" and idrep == 0:
-        dot.node(name,state + '\n' + user_input_splited[1])
-        idrep +=1
-    elif state == "Identifier" and idrep == 1:
-        dot.node(name, state + '\n' + user_input_splited[6])
-    else:
-        dot.node(name, state+ '\n' + extra)
+    dot.node(name,state)
 
     name_list.append(state)
 
@@ -409,8 +416,8 @@ def addNode(state,extra):
     NodeUniqueName +=1
     return name
 
-def addEgde(preState,currentState,extra):
-    dot.edge(preState,currentState,label = extra)
+def addEgde(preState,currentState):
+    dot.edge(preState,currentState)
 
 
 
@@ -862,13 +869,11 @@ def printAllGOTO(diction):
 
 
 user_input = input("enter tokens")
-user_input_splited = user_input.split(" ")
-
 # for parse tree
 NodeUniqueName = 0
-idrep=0
-dot = graphviz.Digraph('The Round Table', filename='pTree.gv')
+dot = graphviz.Digraph('The Round Table', filename='ss.gv')
 name_list =[]
+
 if check_statment(user_input) == 'valid':
     print(statment_accept(user_input))
     my_tokens = statment_accept(user_input)

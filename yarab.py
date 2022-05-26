@@ -66,7 +66,7 @@ def check_statment(code_in):
         i=0
         while re.fullmatch(ID, code_in[i]):
             i+=1
-            if i+2>=len(code_in):
+            if i+2>len(code_in):
                 return 'Invalid statement11'
             if (re.fullmatch(assignment, code_in[i])) and i < len(code_in):
                 i += 1
@@ -800,23 +800,27 @@ def printParseTreeInNewWindow():
     newWindow.geometry("300x300")
 
     # A Label widget to show in toplevel
+    print("\nSLR(1) parsing table:\n")
+
+
+
     for c in range(len(rows)):
-        w = Entry(newWindow, width=9, fg='blue', font=('Arial', 14, 'bold'))
-        w.grid(row=c + 1, column=0)
-        w.insert(END, "I" + str(c))
+        w = Entry(newWindow, width=10, fg='blue', font=('Arial', 14, 'bold'))
+        w.grid(row=c+1 , column=0)
+        w.insert(END,"I" + str(c))
+
 
     for c in range(len(cols)):
-        a = Entry(newWindow, width=9, fg='blue', font=('Arial', 14, 'bold'))
-        a.grid(row=0, column=c + 1)
-        a.insert(END, cols[c])
-    # e.insert(" ", frmt.format(*cols), "\n")
-    for i in range(len(rows)):
+        a = Entry(newWindow, width=10, fg='blue', font=('Arial', 14, 'bold'))
+        a.grid(row=0 , column=c+1)
+        a.insert(END,cols[c])
+    #e.insert(" ", frmt.format(*cols), "\n")
+    for i in range(len(rows)) :
         for j in range(len(cols)):
-            e = Entry(newWindow, width=9, fg='blue', font=('Arial', 14, 'bold'))
+            e = Entry(newWindow, width=10, fg='blue', font=('Arial', 14, 'bold'))
 
-            e.grid(row=i + 1, column=j + 1)
+            e.grid(row=i+1, column=j+1)
             e.insert(END, Table[i][j])
-
 
 
 
@@ -913,6 +917,7 @@ def createParseTable(statesDict, stateMap, T, NT):
 
 
 
+
     for y in Table:
         frmt1 = "{:>8}" * len(y)
         print(f"{{:>3}} {frmt1.format(*y)}"
@@ -998,11 +1003,9 @@ def start_point(user_input):
 
 
     else:
-        global root
-        newWindow = Toplevel(root)
-        newWindow.title("Invalid Statement")
-        tk.Label(newWindow, text="Invalid statement ", font=('Times', 20), bg='red').grid(row=2)
-        newWindow.geometry("200x50")
+        print('invalid state')
+        #exit()
+
 # * MAIN * - Driver Code ================================================================================================
 
 # uncomment any rules set to test code
@@ -1025,6 +1028,7 @@ name_list =[]
 my_tokens=[]
 NodeUniqueName = 0
 idrep=0
+
 rows = 0
 cols = 0
 stackArray = []
@@ -1033,10 +1037,10 @@ user_input=''
 def main():
 
     root.title("SLR1")
-    root.geometry("420x400")
+    root.geometry("700x700")
     tk.Label(root, text="Please enter Statements: ", font=('Times', 20), fg="Purple", bg='sky blue').grid(row=0)
-    user_input_gui = tk.Entry(root, width=40)
-    user_input_gui.grid(row=3, column=0, sticky=tk.W, padx=10, pady=20)
+    user_input_gui = tk.Entry(root)
+    user_input_gui.place(x=10, y=370, width=300, height=40)
     result = tk.Label(root, bg='light blue')
     result.place(x=50, y=550)
     btn = tk.Button(root, text='Tokenize', font=('Times', 12), bg='blue violet')
